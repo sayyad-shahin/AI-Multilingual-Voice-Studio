@@ -41,7 +41,7 @@ def process():
     return jsonify({
     "translated": translated,
     "notes": text_to_notes(text),
-    "audio_url": f"http://127.0.0.1:5000/audio/{filename}"
+    "audio_url": f"https://ai-multilingual-voice-studio.onrender.com/audio/{filename}"
 })
 
 #  Serve audio

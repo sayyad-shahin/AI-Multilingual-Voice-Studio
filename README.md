@@ -1,47 +1,41 @@
-#  AI Multilingual Voice Studio
+# AI Multilingual Voice Studio
 
-An AI-powered web application that converts text or speech into multiple languages with real-time translation, voice output, and interactive music generation.
+AI Multilingual Voice Studio is a full-stack web application that performs real-time text translation, Hinglish conversion, and text-to-speech audio generation. The application also includes an interactive harmonium feature that converts text into musical notes.
 
----
+## Live Demo
 
-##  Features
+Frontend: https://ai-multilingual-voice-studio.netlify.app  
+Backend API: https://ai-multilingual-voice-studio.onrender.com
 
-*  **Multilingual Translation**
-  Translate text into multiple languages instantly
+## Features
 
-*  **Voice Input**
-  Speak directly and convert speech to text
+- Real-time multilingual translation  
+- Hinglish (Hindi-English) output  
+- Text-to-speech audio generation  
+- Downloadable audio output  
+- Voice input using speech recognition  
+- Harmonium music notes from text  
+- Simple and clean UI  
 
-*  **Text-to-Speech (TTS)**
-  Generate audio output for translated text
+## Tech Stack
 
-*  **Harmonium Music Generator**
-  Converts text into musical notes and plays them
+Frontend:
+- HTML
+- CSS
+- JavaScript
 
-*  **Download Audio**
-  Save translated speech as an MP3 file
+Backend:
+- Python
+- Flask
+- gTTS
+- deep-translator
 
----
+Deployment:
+- Frontend: Netlify
+- Backend: Render
 
-##  Tech Stack
+## Project Structure
 
-**Frontend:**
-
-* HTML5
-* CSS3 (Glass UI)
-* JavaScript
-
-**Backend:**
-
-* Python (Flask)
-* gTTS (Google Text-to-Speech)
-* Deep Translator
-
----
-
-##  Project Structure
-
-```
 AI-Multilingual-Voice-Studio/
 │
 ├── backend/
@@ -50,96 +44,56 @@ AI-Multilingual-Voice-Studio/
 │   └── audio_files/
 │
 ├── frontend/
-│   └── index.html
+│   ├── index.html
+│   └── sounds/
 │
 └── README.md
-```
 
----
+## How to Run Locally
 
-##  Installation & Setup
+Backend:
 
-### 1. Clone the repository
+cd backend  
+pip install -r requirements.txt  
+python app.py  
 
-```
-git clone https://github.com/your-username/AI-Multilingual-Voice-Studio.git
-cd AI-Multilingual-Voice-Studio/backend
-```
+Frontend:
 
-### 2. Install dependencies
+Open frontend/index.html in browser
 
-```
-pip install -r requirements.txt
-```
+## API Endpoint
 
-### 3. Run the backend server
+POST /process
 
-```
-python app.py
-```
-
-### 4. Open frontend
-
-Open `index.html` in your browser
-
----
-
-##  API Endpoint
-
-### POST `/process`
-
-**Request:**
-
-```json
+Request:
 {
   "text": "Hello world",
   "lang": "hi"
 }
-```
 
-**Response:**
-
-```json
+Response:
 {
-  "translated": "नमस्ते दुनिया",
+  "translated": "...",
+  "hinglish": "...",
   "notes": ["sa", "re", "ga"],
-  "audio_url": "http://127.0.0.1:5000/audio/file.mp3"
+  "audio_url": "..."
 }
-```
 
----
+## Deployment
 
-##  Use Cases
+Backend is hosted on Render using Gunicorn  
+Frontend is hosted on Netlify  
 
-* Language learning
-* Voice-based translation tools
-* AI-powered communication apps
-* Educational music + speech experiments
+## Limitations
 
----
+- Free hosting may be slow initially  
+- Audio files are temporary  
+- Limited usage on free plan  
 
-##  Deployment
+## Author
 
-* Frontend: Netlify / Vercel
-* Backend: Render / Railway
+Shahin Sayyad
 
----
+## License
 
-##  Future Improvements
-
-* Add real AI voice (OpenAI / ElevenLabs)
-* Improve UI animations
-* Add more musical instruments
-* Mobile responsive design
-
----
-
-##  Author
-
-Developed as an AI-powered full-stack project demonstrating real-time translation, speech synthesis, and interactive audio generation.
-
----
-
-##  Show your support
-
-If you like this project, give it a ⭐ on GitHub!
+For educational and demo purposes

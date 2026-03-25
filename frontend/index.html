@@ -184,13 +184,13 @@ const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const baseSa = 240; // you can change this (like real harmonium)
 
 const notesFreq = {
-  sa: baseSa,
-  re: baseSa * (9/8),
-  ga: baseSa * (5/4),
-  ma: baseSa * (4/3),
-  pa: baseSa * (3/2),
-  dha: baseSa * (5/3),
-  ni: baseSa * (15/8)
+  sa: 277.18,  // C#
+  re: 311.13,  // D#
+  ga: 349.23,  // F
+  ma: 369.99,  // F#
+  pa: 415.30,  // G#
+  dha: 466.16, // A#
+  ni: 523.25   // C
 };
 
 // 🚀 API CALL (NO CHANGE)
@@ -244,22 +244,54 @@ function play(note) {
     let freq = notesFreq[note];
     if (!freq) return;
 
-    let osc = audioCtx.createOscillator();
+    let osc1 = audioCtx.createOscillator();
+    let osc2 = audioCtx.createOscillator();
+    let osc3 = audioCtx.createOscillator();
+
     let gain = audioCtx.createGain();
 
-    osc.type = "triangle"; // more harmonium-like
-    osc.frequency.value = freq;
+    // Wave types (rich harmonium tone)
+    osc1.type = "sawtooth";
+    osc2.type = "square";
+    osc3.type = "triangle";
 
-    osc.connect(gain);
+    // Frequencies (harmonics)
+    osc1.frequency.value = freq;
+    osc2.frequency.value = freq * 2;   // octave
+    osc3.frequency.value = freq * 0.5; // bass feel
+
+    // Connect
+    osc1.connect(gain);
+    osc2.connect(gain);
+    osc3.connect(gain);
     gain.connect(audioCtx.destination);
 
-    // Smooth attack + decay
+    // Envelope (real harmonium airflow feel)
     gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.5, audioCtx.currentTime + 0.05);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+    gain.gain.exponentialRampToValueAtTime(0.6, audioCtx.currentTime + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
 
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.5);
+    // Vibrato (reed effect)
+    let lfo = audioCtx.createOscillator();
+    let lfoGain = audioCtx.createGain();
+
+    lfo.frequency.value = 5;
+    lfoGain.gain.value = 4;
+
+    lfo.connect(lfoGain);
+    lfoGain.connect(osc1.frequency);
+
+    // Start
+    osc1.start();
+    osc2.start();
+    osc3.start();
+    lfo.start();
+
+    // Stop
+    osc1.stop(audioCtx.currentTime + 0.8);
+    osc2.stop(audioCtx.currentTime + 0.8);
+    osc3.stop(audioCtx.currentTime + 0.8);
+    lfo.stop(audioCtx.currentTime + 0.8);
 }
 
 // 🎹 Auto music (slightly improved feel)

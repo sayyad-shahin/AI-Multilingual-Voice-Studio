@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Multilingual Voice Studio</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #020617, #0f172a);
+            color: white;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            background: #0f172a;
+            color: white;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        select, button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+        }
+
+        select {
+            background: #1e293b;
+            color: white;
+        }
+
+        button {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        .section {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .section h3 {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .notes button {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            margin: 5px;
+            width: 50px;
+        }
+
+        .download-btn {
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .loader {
+            text-align: center;
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>AI Multilingual Voice Studio</h1>
+
+    <textarea id="text" rows="3" placeholder="Type or speak your text..."></textarea>
+
+    <div class="row">
+        <select id="language">
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="mr">Marathi</option>
+            <option value="hinglish">Hinglish</option>
+            <option value="fr">French</option>
+            <option value="es">Spanish</option>
+            <option value="de">German</option>
+            <option value="ar">Arabic</option>
+            <option value="ru">Russian</option>
+            <option value="zh-CN">Chinese</option>
+            <option value="ja">Japanese</option>
+        </select>
+
+        <button onclick="startVoice()"> Speak</button>
+        <button onclick="processText()"> Process</button>
+    </div>
+
+    <div class="loader" id="loader">Processing AI...</div>
+
+
+    <div class="section">
+        <h3>Translated Output</h3>
+        <p id="translated"></p>
+    </div>
+
+    <div class="section">
+        <h3>Voice Output</h3>
+        <audio id="audio" controls></audio><br>
+
+        <a id="download" download="translated.mp3" class="download-btn">
+            <button>Download Audio</button>
+        </a>
+    </div>
+
+    <div class="section">
+        <h3>Harmonium</h3>
+
+        <button onclick="playNotes()">Play AI Music</button>
+
+        <div class="notes">
+            <button onclick="play('sa')">sa</button>
+            <button onclick="play('re')">re</button>
+            <button onclick="play('ga')">ga</button>
+            <button onclick="play('ma')">ma</button>
+            <button onclick="play('pa')">pa</button>
+            <button onclick="play('dha')">dha</button>
+            <button onclick="play('ni')">ni</button>
+        </div>
+
+        <p style="margin-top:10px;font-size:12px;">
+            Keyboard: A S D F G H J
+        </p>
+    </div>
+
+</div>
+
+<script>
+
+let notes = [];
+
+// 🎵 Web Audio API (NEW)
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+const baseSa = 240; // you can change this (like real harmonium)
+
+const notesFreq = {
+  sa: baseSa,
+  re: baseSa * (9/8),
+  ga: baseSa * (5/4),
+  ma: baseSa * (4/3),
+  pa: baseSa * (3/2),
+  dha: baseSa * (5/3),
+  ni: baseSa * (15/8)
+};
+
+// 🚀 API CALL (NO CHANGE)
+async function processText() {
+    let loader = document.getElementById("loader");
+    loader.style.display = "block";
+
+    let text = document.getElementById("text").value;
+    let lang = document.getElementById("language").value;
+
+    try {
+        let res = await fetch("https://ai-multilingual-voice-studio.onrender.com/process", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({text: text, lang: lang})
+        });
+
+        let data = await res.json();
+
+        document.getElementById("translated").innerText = data.translated;
+
+        notes = data.notes;
+
+        let audio = document.getElementById("audio");
+        audio.src = data.audio_url;
+
+        document.getElementById("download").href = data.audio_url;
+
+    } catch (err) {
+        alert("Server error. Please check backend.");
+    }
+
+    loader.style.display = "none";
+}
+
+// 🎤 Voice Input (NO CHANGE)
+function startVoice() {
+    let recognition = new webkitSpeechRecognition();
+    recognition.lang = "en-IN";
+
+    recognition.onresult = function(event) {
+        document.getElementById("text").value =
+            event.results[0][0].transcript;
+    };
+
+    recognition.start();
+}
+
+// 🎹 UPDATED PLAY FUNCTION (IMPORTANT CHANGE)
+function play(note) {
+    let freq = notesFreq[note];
+    if (!freq) return;
+
+    let osc = audioCtx.createOscillator();
+    let gain = audioCtx.createGain();
+
+    osc.type = "triangle"; // more harmonium-like
+    osc.frequency.value = freq;
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    // Smooth attack + decay
+    gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.5, audioCtx.currentTime + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.5);
+}
+
+// 🎹 Auto music (slightly improved feel)
+function playNotes() {
+    let i = 0;
+
+    function next() {
+        if (i >= notes.length) return;
+        play(notes[i]);
+        i++;
+        setTimeout(next, 400); // smoother
+    }
+
+    next();
+}
+
+// ⌨ Keyboard (NO CHANGE)
+document.addEventListener("keydown", function(e) {
+    let map = {
+        'a': 'sa',
+        's': 're',
+        'd': 'ga',
+        'f': 'ma',
+        'g': 'pa',
+        'h': 'dha',
+        'j': 'ni'
+    };
+
+    let note = map[e.key];
+    if (note) play(note);
+});
+
+</script>
+
+</body>
+</html>
+

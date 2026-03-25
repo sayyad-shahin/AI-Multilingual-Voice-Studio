@@ -10,8 +10,18 @@ CORS(app)
 
 #  Convert text → harmonium notes
 def text_to_notes(text):
-    notes_map = ['sa','re','ga','ma','pa','dha','ni']
-    return [notes_map[ord(c) % 7] for c in text]
+    scale = ['sa', 're', 'ga', 'ma', 'pa', 'dha', 'ni']
+    
+    notes = []
+    index = 0
+
+    for char in text:
+        if char.isalpha():
+            note = scale[index % 7]
+            notes.append(note)
+            index += 1
+
+    return notes
 
 
 #  MAIN API

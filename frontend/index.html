@@ -16,29 +16,65 @@ box-sizing:border-box;
 
 body{
 font-family:'Poppins',sans-serif;
-background:linear-gradient(135deg,#020617,#0f172a);
+background:#020617;
 color:white;
+display:flex;
+height:100vh;
+overflow:hidden;
 }
 
-.container{
-max-width:950px;
-margin:40px auto;
-padding:30px;
-border-radius:20px;
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(20px);
-box-shadow:0 10px 40px rgba(0,0,0,0.6);
+/* Sidebar */
+
+.sidebar{
+width:240px;
+background:#0f172a;
+padding:25px;
+display:flex;
+flex-direction:column;
+gap:20px;
+border-right:1px solid rgba(255,255,255,0.08);
 }
 
-h1{
-text-align:center;
+.logo{
+font-size:20px;
+font-weight:700;
 margin-bottom:20px;
 }
+
+.navbtn{
+padding:12px;
+border-radius:10px;
+background:#1e293b;
+cursor:pointer;
+transition:0.3s;
+}
+
+.navbtn:hover{
+background:#6366f1;
+}
+
+/* Main */
+
+.main{
+flex:1;
+padding:40px;
+overflow:auto;
+}
+
+.section{
+display:none;
+}
+
+.active{
+display:block;
+}
+
+/* Translator */
 
 textarea{
 width:100%;
 padding:15px;
-border-radius:12px;
+border-radius:10px;
 border:none;
 background:#0f172a;
 color:white;
@@ -50,47 +86,118 @@ font-size:15px;
 display:flex;
 gap:10px;
 flex-wrap:wrap;
-margin-bottom:10px;
+margin-bottom:15px;
 }
 
-select{
-flex:1;
+select,button{
 padding:12px;
 border-radius:10px;
 border:none;
-font-size:14px;
 background:#1e293b;
 color:white;
-}
-
-.section{
-margin-top:20px;
-padding:15px;
-border-radius:12px;
-background:rgba(255,255,255,0.05);
-position:relative;
-}
-
-.speaker{
-position:absolute;
-right:15px;
-top:15px;
-font-size:18px;
 cursor:pointer;
 }
 
-.notes button{
-background:linear-gradient(135deg,#f59e0b,#f97316);
-margin:5px;
-width:50px;
+button{
+background:#6366f1;
 }
 
-.loader{
-text-align:center;
-display:none;
+/* AI Sphere */
+
+.sphere{
+width:150px;
+height:150px;
+border-radius:50%;
+margin:30px auto;
+background:radial-gradient(circle,#6366f1,#0ea5e9);
+box-shadow:0 0 60px #6366f1;
+animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+0%{transform:scale(1)}
+50%{transform:scale(1.15)}
+100%{transform:scale(1)}
+}
+
+/* Waves */
+
+.waves{
+display:flex;
+justify-content:center;
+gap:6px;
 margin-top:10px;
-font-size:14px;
-color:#60a5fa;
+}
+
+.waves span{
+width:6px;
+height:25px;
+background:#60a5fa;
+animation:wave 1s infinite ease-in-out;
+}
+
+.waves span:nth-child(2){animation-delay:0.1s}
+.waves span:nth-child(3){animation-delay:0.2s}
+.waves span:nth-child(4){animation-delay:0.3s}
+.waves span:nth-child(5){animation-delay:0.4s}
+
+@keyframes wave{
+0%,100%{transform:scaleY(0.4)}
+50%{transform:scaleY(1.5)}
+}
+
+/* Harmonium Layout */
+
+.harmoniumWrapper{
+display:flex;
+justify-content:center;
+align-items:center;
+height:70vh;
+}
+
+.harmoniumBoard{
+
+background:linear-gradient(#8b5a2b,#5c3a1a);
+padding:30px;
+border-radius:20px;
+box-shadow:0 20px 60px rgba(0,0,0,0.6);
+}
+
+.harmonium{
+display:flex;
+gap:6px;
+}
+
+/* Keys */
+
+.key{
+width:90px;
+height:320px;
+background:linear-gradient(#ffffff,#ddd);
+border-radius:6px;
+display:flex;
+align-items:flex-end;
+justify-content:center;
+font-weight:600;
+color:black;
+padding-bottom:15px;
+cursor:pointer;
+transition:0.08s;
+box-shadow:0 8px #aaa;
+font-size:18px;
+}
+
+.key.active{
+transform:translateY(8px);
+box-shadow:0 0 #aaa;
+background:#fde68a;
+}
+
+.output{
+margin-top:20px;
+padding:15px;
+background:#0f172a;
+border-radius:10px;
 }
 
 </style>
@@ -98,11 +205,35 @@ color:#60a5fa;
 
 <body>
 
-<div class="container">
+<div class="sidebar">
 
-<h1>AI Multilingual Voice Studio</h1>
+<div class="logo">AI Voice Studio</div>
 
-<textarea id="text" rows="3" placeholder="Type or speak your text..."></textarea>
+<div class="navbtn" onclick="showSection('translator')">
+AI Voice Translator
+</div>
+
+<div class="navbtn" onclick="showSection('harmonium')">
+AI Harmonium Studio
+</div>
+
+</div>
+
+<div class="main">
+
+<!-- TRANSLATOR -->
+
+<div id="translator" class="section active">
+
+<h2>AI Voice Translator</h2>
+
+<div class="sphere"></div>
+
+<div class="waves">
+<span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<textarea id="text" rows="3" placeholder="Click here and start speaking..."></textarea>
 
 <div class="row">
 
@@ -110,21 +241,15 @@ color:#60a5fa;
 <option value="en">English</option>
 <option value="hi">Hindi</option>
 <option value="mr">Marathi</option>
-<option value="gu">Gujarati</option>
 <option value="ta">Tamil</option>
 <option value="te">Telugu</option>
-<option value="kn">Kannada</option>
-<option value="or">Odia</option>
+<option value="gu">Gujarati</option>
 </select>
 
 <select id="voiceType">
 <option value="john">John</option>
-<option value="daniel">Daniel</option>
-<option value="michael">Michael</option>
-<option value="david">David</option>
 <option value="bella">Bella</option>
-<option value="sarah">Sarah</option>
-<option value="lily">Lily</option>
+<option value="daniel">Daniel</option>
 <option value="emma">Emma</option>
 </select>
 
@@ -132,48 +257,51 @@ color:#60a5fa;
 <option value="india">Indian Accent</option>
 <option value="us">US Accent</option>
 <option value="uk">UK Accent</option>
-<option value="australia">Australian Accent</option>
-<option value="canada">Canadian Accent</option>
-<option value="singapore">Singapore Accent</option>
+<option value="australia">Australia</option>
 </select>
 
-</div>
-
-<div class="row">
 <button onclick="processText()">Process</button>
-</div>
-
-<div class="loader" id="loader">Analyzing your Input...</div>
-
-<div class="section">
-
-<h3>Translated Output</h3>
-
-<span id="speaker" class="speaker">🔊</span>
-
-<p id="translated">Your translation will appear here</p>
 
 </div>
 
-<div class="section">
+<div class="output">
 
-<h3>Harmonium</h3>
-
-<!--  removed Play AI Music button -->
-
-<div class="notes">
-
-<button onclick="play('sa')">sa</button>
-<button onclick="play('re')">re</button>
-<button onclick="play('ga')">ga</button>
-<button onclick="play('ma')">ma</button>
-<button onclick="play('pa')">pa</button>
-<button onclick="play('dha')">dha</button>
-<button onclick="play('ni')">ni</button>
+<h3>Translation</h3>
+<p id="translated">Waiting for input...</p>
 
 </div>
 
-<p style="font-size:12px;">Keyboard: A S D F G H J</p>
+</div>
+
+<!-- HARMONIUM -->
+
+<div id="harmonium" class="section">
+
+<h2 style="text-align:center">AI Harmonium Studio</h2>
+
+<div class="harmoniumWrapper">
+
+<div class="harmoniumBoard">
+
+<div class="harmonium">
+
+<div class="key" data-note="sa">Sa</div>
+<div class="key" data-note="re">Re</div>
+<div class="key" data-note="ga">Ga</div>
+<div class="key" data-note="ma">Ma</div>
+<div class="key" data-note="pa">Pa</div>
+<div class="key" data-note="dha">Dha</div>
+<div class="key" data-note="ni">Ni</div>
+
+</div>
+
+</div>
+
+</div>
+
+<p style="text-align:center;margin-top:20px">
+Keyboard: A S D F G H J
+</p>
 
 </div>
 
@@ -181,20 +309,16 @@ color:#60a5fa;
 
 <script>
 
-let notes=[]
-let audio=new Audio()
-let mute=false
+/* Navigation */
 
-document.getElementById("speaker").onclick=function(){
-
-mute=!mute
-
-this.innerText=mute?"🔇":"🔊"
-
-if(mute)audio.pause()
-else audio.play()
-
+function showSection(id){
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"))
+document.getElementById(id).classList.add("active")
 }
+
+/* Translator */
+
+let audio=new Audio()
 
 async function processText(){
 
@@ -203,10 +327,7 @@ let lang=document.getElementById("language").value
 let voice=document.getElementById("voiceType").value
 let accent=document.getElementById("accent").value
 
-if(!text)return
-
-let loader=document.getElementById("loader")
-loader.style.display="block"
+if(!text) return
 
 let res=await fetch("http://127.0.0.1:5000/process",{
 
@@ -226,46 +347,52 @@ let data=await res.json()
 
 document.getElementById("translated").innerText=data.translated
 
-notes=data.notes
-
 audio.src=data.audio_url
-
-if(!mute){
 audio.play()
-}
-
-loader.style.display="none"
 
 }
 
-const recognition=new webkitSpeechRecognition()
+/* Voice Recognition */
+
+let recognition
+
+if('webkitSpeechRecognition' in window){
+
+recognition=new webkitSpeechRecognition()
 
 recognition.continuous=false
 recognition.interimResults=true
-
-//  Start voice when clicking textarea
-document.getElementById("text").addEventListener("click",()=>{
-recognition.start()
-})
+recognition.lang="en-US"
 
 recognition.onresult=function(event){
 
 let transcript=""
 
-for(let i=event.resultIndex;i<event.results.length;i++){
+for(let i=0;i<event.results.length;i++){
 transcript+=event.results[i][0].transcript
 }
 
 document.getElementById("text").value=transcript
 
+}
+
+recognition.onend=function(){
 processText()
-
-recognition.stop()
-
+}
 
 }
 
-//  Harmonium
+/* Start mic when textbox clicked */
+
+document.getElementById("text").addEventListener("click",function(){
+
+if(recognition){
+recognition.start()
+}
+
+})
+
+/* Harmonium Engine */
 
 const audioCtx=new(window.AudioContext||window.webkitAudioContext)()
 
@@ -279,33 +406,58 @@ dha:466.16,
 ni:523.25
 }
 
-function play(note){
+let activeOsc={}
 
-let freq=notesFreq[note]
-if(!freq)return
+function startNote(note){
+
+if(activeOsc[note]) return
 
 let osc=audioCtx.createOscillator()
 let gain=audioCtx.createGain()
 
 osc.type="sawtooth"
-osc.frequency.value=freq
+osc.frequency.value=notesFreq[note]
 
 osc.connect(gain)
 gain.connect(audioCtx.destination)
 
-gain.gain.setValueAtTime(0.001,audioCtx.currentTime)
-gain.gain.exponentialRampToValueAtTime(0.5,audioCtx.currentTime+0.05)
-gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.8)
+gain.gain.setValueAtTime(0.4,audioCtx.currentTime)
 
 osc.start()
-osc.stop(audioCtx.currentTime+0.8)
+
+activeOsc[note]={osc,gain}
+
+document.querySelector(`[data-note="${note}"]`).classList.add("active")
 
 }
 
-//  Keyboard support
-document.addEventListener("keydown",function(e){
+function stopNote(note){
 
-let map={
+if(!activeOsc[note]) return
+
+activeOsc[note].osc.stop()
+
+delete activeOsc[note]
+
+document.querySelector(`[data-note="${note}"]`).classList.remove("active")
+
+}
+
+/* Mouse interaction */
+
+document.querySelectorAll(".key").forEach(key=>{
+
+let note=key.dataset.note
+
+key.addEventListener("mousedown",()=>startNote(note))
+key.addEventListener("mouseup",()=>stopNote(note))
+key.addEventListener("mouseleave",()=>stopNote(note))
+
+})
+
+/* Keyboard harmonium */
+
+const keyMap={
 a:'sa',
 s:'re',
 d:'ga',
@@ -315,12 +467,14 @@ h:'dha',
 j:'ni'
 }
 
-let note=map[e.key]
+document.addEventListener("keydown",e=>{
+let note=keyMap[e.key]
+if(note) startNote(note)
+})
 
-if(note){
-play(note)
-}
-
+document.addEventListener("keyup",e=>{
+let note=keyMap[e.key]
+if(note) stopNote(note)
 })
 
 </script>
